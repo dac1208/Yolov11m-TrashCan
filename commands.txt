@@ -1,0 +1,129 @@
+# =========================================================
+# commands.txt — YOLO (Ultralytics) training + dataset scripts
+# TrashCan-Instance experiments (YOLOv11m)
+#
+# IMPORTANT:
+# - Replace <PROJECT_ROOT> with the folder where you cloned this repo.
+# - Replace <DATA_YAML> with the path to your base 22-class trashcan.yaml.
+# - Do NOT upload datasets, runs/, or *.pt weights to GitHub.
+# =========================================================
+
+
+# =========================================================
+# 0) SET PATHS (EDIT THESE)
+# =========================================================
+# <PROJECT_ROOT>  = where this repo is located on your machine
+# <DATA_YAML>     = path to the base YOLO dataset yaml (22 classes)
+#
+# Example (Windows):
+#   <PROJECT_ROOT> = C:\Work\name-yolo-scripts
+#   <DATA_YAML>    = C:\Data\TrashCan\yolo_format\trashcan.yaml
+#
+# Example (Linux):
+#   <PROJECT_ROOT> = /home/user/name-yolo-scripts
+#   <DATA_YAML>    = /data/trashcan/yolo_format/trashcan.yaml
+
+
+# =========================================================
+# 1) ENVIRONMENT SETUP
+# =========================================================
+# Windows (PowerShell / CMD):
+cd <PROJECT_ROOT>
+python -m venv .venv
+.\.venv\Scripts\activate
+pip install -U ultralytics pillow pyyaml tqdm
+
+# (Optional) check version:
+python -c "import ultralytics; print('ultralytics:', ultralytics.__version__)"
+
+
+# =========================================================
+# 2) DATASET PREPARATION SCRIPTS (RUN ONLY IF NEEDED)
+# =========================================================
+# These scripts typically require you to edit the input/output paths inside the .py files.
+# They will generate new dataset folders + corresponding YAML files.
+
+# (A) COCO -> YOLO base dataset (22 classes)
+python yolo_scripts\make_yolo_dataset.py
+
+# (B) Cropmix (standard): copy base dataset + add cropped TRAIN samples
+python yolo_scripts\make_cropmix_standard.py
+
+# (C) Cropmix (single-object): crops only from images with exactly one object
+python yolo_scripts\make_cropmix_singleobj.py
+
+# (D) 22 -> 3 classes mapping: ROV / BIO / TRASH
+python yolo_scripts\make_3cls_dataset.py
+
+
+# =========================================================
+# 3) TRAINING — BASELINE (22 classes)
+# =========================================================
+# Baseline settings used as a reference:
+# - imgsz=480
+# - batch=32 (adjust to GPU VRAM)
+# - close_mosaic=20
+
+python -c "from ultralytics import YOLO; m=YOLO('yolo11m.pt'); m.train(data=r'<DATA_YAML>', epochs=100, imgsz=480, batch=32, workers=8, seed=0, close_mosaic=20, project=r'runs', name='SAFE_img480_closemosaic20')"
+
+# Baseline with bigger input (slower, not consistently better in our tests)
+python -c "from ultralytics import YOLO; m=YOLO('yolo11m.pt'); m.train(data=r'<DATA_YAML>', epochs=100, imgsz=640, batch=32, workers=8, seed=0, close_mosaic=20, project=r'runs', name='SAFE_img640_closemosaic20')"
+
+
+# =========================================================
+# 4) TRAINING — ABLATIONS (22 classes)
+# =========================================================
+# (A) AdamW + Cosine LR schedule (worse than baseline in our runs)
+python -c "from ultralytics import YOLO; m=YOLO('yolo11m.pt'); m.train(data=r'<DATA_YAML>', epochs=100, imgsz=480, batch=32, workers=8, seed=0, close_mosaic=20, optimizer='AdamW', cos_lr=True, project=r'runs', name='ABL_adamw_coslr_480')"
+
+# (B) Small-object style augmentations (mild geometry)
+python -c "from ultralytics import YOLO; m=YOLO('yolo11m.pt'); m.train(data=r'<DATA_YAML>', epochs=100, imgsz=480, batch=32, workers=8, seed=0, close_mosaic=20, degrees=5, translate=0.1, scale=0.5, fliplr=0.5, project=r'runs', name='ABL_smallobj_aug_480')"
+
+# (C) Disable AutoAugment + Random Erasing (to preserve fine details)
+python -c "from ultralytics import YOLO; m=YOLO('yolo11m.pt'); m.train(data=r'<DATA_YAML>', epochs=100, imgsz=480, batch=32, workers=8, seed=0, close_mosaic=20, auto_augment=None, erasing=0.0, project=r'runs', name='ABL_noauto_noerase_480')"
+
+# (D) HSV + scale tuning (stronger color/illumination augmentation)
+python -c "from ultralytics import YOLO; m=YOLO('yolo11m.pt'); m.train(data=r'<DATA_YAML>', epochs=100, imgsz=480, batch=32, workers=8, seed=0, close_mosaic=20, scale=1.0, hsv_h=0.03, hsv_s=0.8, hsv_v=0.6, project=r'runs', name='ABL_scale1_hsvH03_S08_V06')"
+
+# (E) Mosaic tuning (reduce mosaic strength and stop earlier)
+python -c "from ultralytics import YOLO; m=YOLO('yolo11m.pt'); m.train(data=r'<DATA_YAML>', epochs=100, imgsz=480, batch=32, workers=8, seed=0, mosaic=0.5, close_mosaic=10, project=r'runs', name='ABL_mosaic05_close10')"
+
+# (F) Learning rate tuning
+python -c "from ultralytics import YOLO; m=YOLO('yolo11m.pt'); m.train(data=r'<DATA_YAML>', epochs=100, imgsz=480, batch=32, workers=8, seed=0, close_mosaic=20, lr0=0.005, lrf=0.1, project=r'runs', name='ABL_lr005_lrf01')"
+
+# (G) Higher resolution example (adjust batch based on GPU VRAM)
+# Note: larger imgsz usually requires smaller batch.
+python -c "from ultralytics import YOLO; m=YOLO('yolo11m.pt'); m.train(data=r'<DATA_YAML>', epochs=100, imgsz=768, batch=16, workers=8, seed=0, close_mosaic=20, project=r'runs', name='ABL_img768_b16')"
+
+
+# =========================================================
+# 5) TRAINING — CROP MIX DATASETS (generated by scripts)
+# =========================================================
+# Replace these YAML paths with the ones created on your machine.
+
+# Cropmix (standard)
+python -c "from ultralytics import YOLO; m=YOLO('yolo11m.pt'); m.train(data=r'<CROPMIX_YAML>', epochs=100, imgsz=480, batch=32, workers=8, seed=0, close_mosaic=20, project=r'runs', name='CROPMIX_standard_y11m_480')"
+
+# Cropmix (single-object)
+python -c "from ultralytics import YOLO; m=YOLO('yolo11m.pt'); m.train(data=r'<CROPMIX_SINGLEOBJ_YAML>', epochs=100, imgsz=480, batch=16, workers=8, seed=0, close_mosaic=20, auto_augment=None, erasing=0.0, project=r'runs', name='CROPMIX_singleobj_y11m_480')"
+
+
+# =========================================================
+# 6) TRAINING — 3-CLASS DATASET (ROV / BIO / TRASH)
+# =========================================================
+# Replace <TRASHCAN_3CLS_YAML> with the YAML produced by make_3cls_dataset.py.
+
+python -c "from ultralytics import YOLO; m=YOLO('yolo11m.pt'); m.train(data=r'<TRASHCAN_3CLS_YAML>', epochs=100, imgsz=480, batch=32, workers=8, seed=0, close_mosaic=20, auto_augment=None, erasing=0.0, project=r'runs', name='YOLO11m_3CLS_480_closemosaic20')"
+
+
+# =========================================================
+# 7) WHERE TO FIND RESULTS
+# =========================================================
+# Ultralytics outputs:
+# runs/<run_name>/
+#   results.csv
+#   results.png
+#   confusion_matrix.png
+#   labels.jpg
+#   weights/best.pt
+#   weights/last.pt

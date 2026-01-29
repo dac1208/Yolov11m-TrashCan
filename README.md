@@ -39,6 +39,16 @@ To keep the repository lightweight and compliant, the following are NOT included
 - Python 3.10+ recommended
 - Ultralytics YOLO
 
+### Pretrained weights (YOLOv11m)
+This project uses Ultralytics pretrained weights. The file `yolo11m.pt` is **not** stored in this repository.
+Ultralytics will automatically download it on the first run (internet required).
+
+Optional: download weights in advance:
+```bash
+pip install -U ultralytics
+python -c "from ultralytics import YOLO; YOLO('yolo11m.pt')"
+```
+
 ## How to run
 
 ### 1) Clone this repository

@@ -50,6 +50,22 @@ cd <PROJECT_ROOT>
 ### 2) Create and activate a virtual environment (Windows)
 ```bash
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+.\.venv\Scripts\activate.bat
 pip install -U ultralytics pillow pyyaml tqdm
 ```
+### 3) Prepare datasets (optional)
+Run these only if you need to generate the YOLO folders/YAMLs.
+
+```bash
+python yolo_scripts\make_yolo_dataset.py
+python yolo_scripts\make_cropmix_standard.py
+python yolo_scripts\make_cropmix_singleobj.py
+python yolo_scripts\make_3cls_dataset.py
+```
+### 3) Run training commands
+
+1. Open Commands.txt
+
+2. Replace placeholders such as <DATA_YAML> or <RUN_NAME>
+
+3. Copy-paste the selected command into the terminal

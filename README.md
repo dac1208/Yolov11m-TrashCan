@@ -39,53 +39,12 @@ To keep the repository lightweight and compliant, the following are NOT included
 - Python 3.10+ recommended
 - Ultralytics YOLO
 
-Install:
+## How to run
+
+### 1) Clone this repository
+
 ```bash
-pip install -U ultralytics pillow pyyaml tqdm 
+git clone <REPO_URL>
+cd <PROJECT_ROOT>
 
-HOW TO RUN
-
-1) CLONE THIS REPOSITORY
-   - git clone <REPO_URL>
-   - cd <PROJECT_ROOT>
-
-
-2) CREATE AND ACTIVATE A VIRTUAL ENVIRONMENT (WINDOWS)
-
-   PowerShell:
-   - python -m venv .venv
-   - .\.venv\Scripts\Activate.ps1
-   - pip install -U ultralytics pillow pyyaml tqdm
-
-   CMD:
-   - python -m venv .venv
-   - .\.venv\Scripts\activate.bat
-   - pip install -U ultralytics pillow pyyaml tqdm
-
-
-3) PREPARE DATASETS (OPTIONAL)
-   - Run these only if you need to generate the YOLO folders/YAMLs.
-
-   - python yolo_scripts\make_yolo_dataset.py
-   - python yolo_scripts\make_cropmix_standard.py
-   - python yolo_scripts\make_cropmix_singleobj.py
-   - python yolo_scripts\make_3cls_dataset.py
-
-
-4) RUN TRAINING COMMANDS
-   - Open Commands.txt
-   - Replace placeholders like <DATA_YAML> or <RUN_NAME>
-   - Copy-paste the selected command into the terminal
-
-
-OUTPUTS
-- Ultralytics saves training artifacts into:
-  - runs/<run_name>/
-    - results.csv
-    - results.png
-    - confusion_matrix.png
-    - confusion_matrix_normalized.png
-    - labels.jpg
-    - weights/best.pt
-    - weights/last.pt
 

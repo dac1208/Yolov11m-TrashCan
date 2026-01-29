@@ -47,9 +47,9 @@ To keep the repository lightweight and compliant, the following are NOT included
 git clone <REPO_URL>
 cd <PROJECT_ROOT>
 ```
-###** 2) Create and activate a virtual environment (Windows)**
+### 2) Create and activate a virtual environment (Windows)
 ```bash
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -U ultralytics pillow pyyaml tqdm
-
+```

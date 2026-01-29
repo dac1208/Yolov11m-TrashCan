@@ -41,7 +41,7 @@ To keep the repository lightweight and compliant, the following are NOT included
 
 Install:
 ```bash
-pip install -U ultralytics pillow pyyaml tqdm ```
+pip install -U ultralytics pillow pyyaml tqdm 
 
 HOW TO RUN
 

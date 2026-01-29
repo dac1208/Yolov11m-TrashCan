@@ -43,41 +43,49 @@ Install:
 ```bash
 pip install -U ultralytics pillow pyyaml tqdm ```
 
-How to run
+HOW TO RUN
 
-1. Clone this repository:
-``` git clone <REPO_URL>
-cd <PROJECT_ROOT>
-```
+1) CLONE THIS REPOSITORY
+   - git clone <REPO_URL>
+   - cd <PROJECT_ROOT>
 
-2. Create and activate a virtual environment (Windows example):
-``` python -m venv .venv
-.\.venv\Scripts\activate
-pip install -U ultralytics pillow pyyaml tqdm
-```
-3.Prepare datasets (optional, only if you need to generate YOLO folders/YAMLs):
-```
-python yolo_scripts\make_yolo_dataset.py
-python yolo_scripts\make_cropmix_standard.py
-python yolo_scripts\make_cropmix_singleobj.py
-python yolo_scripts\make_3cls_dataset.py
-```
-4. Run training commands:
 
-Open commands.txt
+2) CREATE AND ACTIVATE A VIRTUAL ENVIRONMENT (WINDOWS)
 
-Replace placeholders such as <DATA_YAML>
+   PowerShell:
+   - python -m venv .venv
+   - .\.venv\Scripts\Activate.ps1
+   - pip install -U ultralytics pillow pyyaml tqdm
 
-Copy-paste the desired command into terminal
+   CMD:
+   - python -m venv .venv
+   - .\.venv\Scripts\activate.bat
+   - pip install -U ultralytics pillow pyyaml tqdm
 
-Outputs
 
-Ultralytics saves training artifacts into:
+3) PREPARE DATASETS (OPTIONAL)
+   - Run these only if you need to generate the YOLO folders/YAMLs.
 
-runs/<run_name>/
+   - python yolo_scripts\make_yolo_dataset.py
+   - python yolo_scripts\make_cropmix_standard.py
+   - python yolo_scripts\make_cropmix_singleobj.py
+   - python yolo_scripts\make_3cls_dataset.py
 
-results.csv, results.png
 
-confusion_matrix.png, labels.jpg
+4) RUN TRAINING COMMANDS
+   - Open Commands.txt
+   - Replace placeholders like <DATA_YAML> or <RUN_NAME>
+   - Copy-paste the selected command into the terminal
 
-weights/best.pt, weights/last.pt
+
+OUTPUTS
+- Ultralytics saves training artifacts into:
+  - runs/<run_name>/
+    - results.csv
+    - results.png
+    - confusion_matrix.png
+    - confusion_matrix_normalized.png
+    - labels.jpg
+    - weights/best.pt
+    - weights/last.pt
+

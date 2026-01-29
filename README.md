@@ -46,7 +46,7 @@ To keep the repository lightweight and compliant, the following are NOT included
 ```bash
 git clone <REPO_URL>
 cd <PROJECT_ROOT>
-
+```
 ###** 2) Create and activate a virtual environment (Windows)**
 ```bash
 python -m venv .venv
